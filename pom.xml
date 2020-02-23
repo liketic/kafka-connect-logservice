@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.aliyun.openservices.log.kafka.connect</groupId>
-    <artifactId>kafka-connect-loghub</artifactId>
+    <artifactId>kafka-connect-logservice</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>kafka-connect-loghub</name>
-    <description>A Kafka Connect Connector for Alibaba Cloud Log Service</description>
+    <name>kafka-connect-logservice</name>
+    <description>Kafka Connect Connector for Alibaba Cloud Log Service</description>
 
     <properties>
         <kafka.connect.maven.plugin.version>0.11.1</kafka.connect.maven.plugin.version>
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>aliyun-log-producer</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.3</version>
         </dependency>
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
@@ -89,31 +89,17 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.5.3</version>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <configuration>
-                            <finalName>kafka-sink-aliyun-log-${project.version}</finalName>
-                            <archive>
-                                <manifest>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                    <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                </manifest>
-                            </archive>
-                            <descriptors>
-                                <descriptor>src/main/assembly/package.xml</descriptor>
-                            </descriptors>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <configuration>
+                    <finalName>kafka-connect-logservice-${project.version}</finalName>
+                    <archive>
+                        <manifest>
+                            <mainClass>fully.qualified.MainClass</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
@@ -133,6 +119,17 @@
             </resource>
         </resources>
     </build>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </repository>
+    </repositories>
 
-
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
