@@ -7,6 +7,7 @@ import org.apache.kafka.connect.sink.SinkRecord;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class JsonRecordConverter implements RecordConverter {
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -18,8 +19,8 @@ public class JsonRecordConverter implements RecordConverter {
                     new TypeReference<Map<String, Object>>() {
                     });
             LogItem logItem = new LogItem();
-            for (Map.Entry<String, Object> entry : jsonNode.entrySet()) {
-                logItem.PushBack(entry.getKey(), String.valueOf(entry.getValue()));
+            for (Entry<String, Object> entry : jsonNode.entrySet()) {
+                logItem.PushBack(entry.getKey(), objectMapper.writeValueAsString(entry.getValue()));
             }
             return logItem;
         } catch (IOException e) {
