@@ -15,6 +15,7 @@ public class LoghubSinkConnectorConfig extends AbstractConfig {
     private static final String PROJECT_CONF = "loghub.project";
     private static final String LOGSTORE_CONF = "loghub.logstore";
     private static final String BATCH_SIZE_CONF = "loghub.batchSize";
+    private static final String ORDERING_ENABLED = "loghub.ordering.enabled";
     private static final String FORMAT_CONF = "format";
 
     private String endpoint;
@@ -24,6 +25,7 @@ public class LoghubSinkConnectorConfig extends AbstractConfig {
     private String logstore;
     private int batchSize;
     private String format;
+    private Boolean orderingEnabled;
 
     public LoghubSinkConnectorConfig(Map<?, ?> originals) {
         super(config(), originals);
@@ -34,6 +36,7 @@ public class LoghubSinkConnectorConfig extends AbstractConfig {
         logstore = getString(LOGSTORE_CONF);
         batchSize = getInt(BATCH_SIZE_CONF);
         format = getString(FORMAT_CONF);
+        orderingEnabled = getBoolean(ORDERING_ENABLED);
     }
 
     public static ConfigDef config() {
@@ -66,7 +69,11 @@ public class LoghubSinkConnectorConfig extends AbstractConfig {
                         Type.INT,
                         2000,
                         Importance.MEDIUM,
-                        "Batch size");
+                        "Batch size")
+                .define(ORDERING_ENABLED,
+                        Type.BOOLEAN,
+                        Importance.MEDIUM,
+                        "Put records to SLS the same order as that polled from Kafka");
     }
 
     public String getEndpoint() {
@@ -96,4 +103,6 @@ public class LoghubSinkConnectorConfig extends AbstractConfig {
     public String getFormat() {
         return format;
     }
+
+    public Boolean getOrderingEnabled() {return orderingEnabled; }
 }

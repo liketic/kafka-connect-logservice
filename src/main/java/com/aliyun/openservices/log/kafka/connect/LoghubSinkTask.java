@@ -78,9 +78,7 @@ public class LoghubSinkTask extends SinkTask {
         }
         return null;
     }
-
-    @Override
-    public void put(Collection<SinkRecord> records) {
+    private void putAsync(Collection<SinkRecord> records){
         List<LogItem> logs = new ArrayList<>(batchSize);
         List<Future<Result>> futures = new ArrayList<>();
         for (SinkRecord record : records) {
@@ -109,6 +107,35 @@ public class LoghubSinkTask extends SinkTask {
             }
         }
         futures.clear();
+    }
+
+    private void putSync(Collection<SinkRecord> records){
+        List<LogItem> logs = new ArrayList<>(batchSize);
+        for (SinkRecord record : records) {
+            LogItem item = convertRecord(record);
+            if (item == null) {
+                continue;
+            }
+            logs.add(item);
+            if (logs.size() >= batchSize) {
+                try {
+                    send(logs).get();
+                } catch (InterruptedException e) {
+                    log.error("Interrupted exception", e);
+                } catch (ExecutionException e) {
+                    log.error("Error on sending records", e.getCause());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void put(Collection<SinkRecord> records) {
+        if (config.getOrderingEnabled()){
+            putSync(records);
+        }else{
+            putAsync(records);
+        }
     }
 
     private Future<Result> send(List<LogItem> records) {
